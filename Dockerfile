@@ -25,5 +25,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Port 8000 par server chalayein
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Port 3000 par server chalayein
+CMD ["uvicorn", "app.py:app", "--host", "0.0.0.0", "--port", "3000"]
