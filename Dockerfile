@@ -25,5 +25,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Port 3000 par server chalayein
-CMD ["uvicorn", "app.py:app", "--host", "0.0.0.0", "--port", "3000"]
+# YAHAN CHANGE KIYA HAI: app.py ki jagah main:app likhein (agar file ka naam main.py hai)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
