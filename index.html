@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🚀 Ultimate Lead & Email Extraction Engine</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        animation: {
+          'fade-in': 'fadeIn 0.3s ease-in-out',
+        },
+        keyframes: {
+          fadeIn: { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .glass { backdrop-filter: blur(14px); background: rgba(15, 23, 42, 0.7); }
+  .tab-active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; box-shadow: 0 8px 24px -8px rgba(99,102,241,0.6); }
+  .toast-slide { animation: slideIn 0.3s ease-out; }
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .pulse-warn { animation: pulseWarn 2s infinite; }
+  @keyframes pulseWarn {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+<!-- HEADER -->
+<header class="border-b border-slate-800 glass sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold shadow-lg">⚡</div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold tracking-tight">Ultimate Lead Engine</h1>
+        <p class="text-xs text-slate-400 hidden sm:block">Peak-Performance Email & Lead Extraction</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span id="statusPill" class="text-xs px-3 py-1 rounded-full bg-slate-700/50 text-slate-400 border border-slate-700">
+        ● Connecting…
+      </span>
+      <a href="/download" id="downloadBtn"
+         class="hidden px-3 sm:px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold transition shadow-lg shadow-emerald-600/30">
+        ⬇ Excel
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+  <!-- TABS -->
+  <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+    <button data-tab="gmaps" class="tab-btn tab-active px-4 sm:px-5 py-2.5 rounded-xl text-sm font-semibold transition whitespace-nowrap">🗺 Google Maps</button>
+    <button data-tab="bulk" class="tab-btn px-4 sm:px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 transition whitespace-nowrap">📚 Bulk URLs</button>
+    <button data-tab="single" class="tab-btn px-4 sm:px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 transition whitespace-nowrap">🔗 Single Website</button>
+  </div>
+
+  <!-- TAB: GOOGLE MAPS -->
+  <section id="tab-gmaps" class="tab-content animate-fade-in">
+    <div class="glass border border-slate-800 rounded-2xl p-4 sm:p-6 mb-6">
+      <h2 class="text-lg sm:text-xl font-bold mb-1">🗺 Google Maps Lead Scraper</h2>
+      <p class="text-sm text-slate-400 mb-5">Search a category + city, extract business details, then auto-scan their websites for emails.</p>
+      <form id="gmapsForm" class="flex flex-col md:flex-row gap-3">
+        <input name="gmaps_query" required
+          placeholder="e.g. gym raichur / restaurants in mumbai"
+          class="flex-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 outline-none text-sm" />
+        <button type="submit"
+          class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-semibold text-sm shadow-lg shadow-indigo-600/30 transition whitespace-nowrap">
+          🚀 Start Scraping
+        </button>
+      </form>
+      <div class="flex flex-wrap items-center gap-2 mt-3 text-xs">
+        <span class="text-slate-500">⏱ 30–90s (Selenium + deep scan)</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-slate-500">Do not close this tab</span>
+        <span class="text-slate-600">•</span>
+        <button type="button" id="rerunGmaps" class="text-indigo-400 hover:underline hidden">🔁 Rerun last query</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: BULK -->
+  <section id="tab-bulk" class="tab-content hidden animate-fade-in">
+    <div class="glass border border-slate-800 rounded-2xl p-4 sm:p-6 mb-6">
+      <h2 class="text-lg sm:text-xl font-bold mb-1">📚 Bulk Website Scraper</h2>
+      <p class="text-sm text-slate-400 mb-5">Paste one URL per line. Scans fast with async aiohttp (20 parallel).</p>
+      <form id="bulkForm" class="space-y-3">
+        <textarea name="urls_text" required rows="8"
+          placeholder="https://example1.com&#10;https://example2.com&#10;example3.com"
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 outline-none text-sm font-mono"></textarea>
+        <div class="flex items-center gap-4 flex-wrap">
+          <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+            <input type="checkbox" name="crawl_contact" class="w-4 h-4 accent-indigo-500 rounded" />
+            Also crawl /contact, /about pages
+          </label>
+          <button type="submit"
+            class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-semibold text-sm shadow-lg shadow-indigo-600/30 transition">
+            🚀 Scrape All
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- TAB: SINGLE -->
+  <section id="tab-single" class="tab-content hidden animate-fade-in">
+    <div class="glass border border-slate-800 rounded-2xl p-4 sm:p-6 mb-6">
+      <h2 class="text-lg sm:text-xl font-bold mb-1">🔗 Single Website Scraper</h2>
+      <p class="text-sm text-slate-400 mb-5">Scrapes one site. Tries fast async first → auto-falls back to Selenium for JS-heavy pages.</p>
+      <form id="singleForm" class="flex flex-col md:flex-row gap-3">
+        <input name="target_url" required placeholder="https://example.com"
+          class="flex-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 outline-none text-sm" />
+        <label class="flex items-center gap-2 text-sm text-slate-300 px-3 cursor-pointer whitespace-nowrap">
+          <input type="checkbox" name="use_selenium" class="w-4 h-4 accent-indigo-500" />
+          Force Selenium
+        </label>
+        <button type="submit"
+          class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-semibold text-sm shadow-lg shadow-indigo-600/30 transition">
+          🚀 Scrape
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- LOADER -->
+  <div id="loader" class="hidden glass border border-slate-800 rounded-2xl p-6 sm:p-8 mb-6 text-center">
+    <div class="inline-block w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+    <p class="text-slate-300 font-semibold">Scraping in progress…</p>
+    <p id="loaderHint" class="text-xs text-slate-500 mt-1">This may take 30–90 seconds</p>
+    <p class="text-sm text-indigo-300 mt-2 font-mono" id="loaderTimer">⏱ 0s</p>
+    <p id="loaderWarning" class="hidden text-xs text-amber-400 mt-2 pulse-warn">
+      ⚠️ Taking longer than expected. Please wait or cancel.
+    </p>
+    <button id="cancelBtn"
+      class="mt-4 px-4 py-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-sm font-semibold transition">
+      🛑 Cancel
+    </button>
+  </div>
+
+  <!-- STATS -->
+  <div id="statsBar" class="hidden grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"></div>
+
+  <!-- FILE LOCATION HINT -->
+  <div id="fileHint" class="hidden mb-4 p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+    💾 <span class="text-slate-300">File auto-saved:</span>
+    <code class="text-emerald-400">C:\Users\ACER\Desktop\lead_extractor\ultimate_master_leads.xlsx</code>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsWrap" class="hidden glass border border-slate-800 rounded-2xl overflow-hidden">
+    <div class="px-4 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between flex-wrap gap-3">
+      <h2 class="font-bold text-lg">📊 Extracted Leads</h2>
+      <div class="flex gap-2 flex-wrap">
+        <input id="searchBox" placeholder="🔍 Filter…"
+          class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm outline-none focus:border-indigo-500 w-40 sm:w-48" />
+        <button id="copyBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm" title="Copy as TSV">📋 Copy</button>
+        <button id="csvBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm" title="Download CSV">📥 CSV</button>
+        <button id="jsonBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm" title="Copy JSON">🔧 JSON</button>
+        <a href="/download" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs sm:text-sm font-semibold">⬇ Excel</a>
+      </div>
+    </div>
+    <div class="overflow-x-auto max-h-[65vh] overflow-y-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-900/80 sticky top-0 text-xs uppercase text-slate-400 z-10">
+          <tr>
+            <th class="px-4 py-3 text-left">#</th>
+            <th class="px-4 py-3 text-left">Business</th>
+            <th class="px-4 py-3 text-left">Phone</th>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Website</th>
+            <th class="px-4 py-3 text-left">Address</th>
+            <th class="px-4 py-3 text-left">Rating</th>
+            <th class="px-4 py-3 text-left">Source</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
+      </table>
+    </div>
+    <div class="px-4 sm:px-6 py-3 border-t border-slate-800 text-xs text-slate-500 flex justify-between flex-wrap gap-2">
+      <span id="lastScrapedAt">—</span>
+      <span id="showingCount">—</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast" class="hidden fixed bottom-6 right-6 max-w-xs glass border border-slate-700 rounded-xl px-5 py-3 text-sm font-medium shadow-2xl toast-slide z-50"></div>
+
+<script>
+/* ====================== STATE ====================== */
+let currentData = [];
+let currentFiltered = [];
+let toastTimer;
+let loaderInterval = null;
+let loaderStartTime = 0;
+let currentAbortController = null;
+let lastGmapsQuery = '';
+
+const STORAGE_KEY = 'lead_engine_last_results';
+const QUERY_KEY = 'lead_engine_last_gmaps_query';
+
+/* ====================== TABS ====================== */
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabButtons.forEach(b => {
+      b.classList.remove('tab-active');
+      b.classList.add('bg-slate-800', 'hover:bg-slate-700');
+    });
+    btn.classList.add('tab-active');
+    btn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+    tabContents.forEach(c => c.classList.add('hidden'));
+    document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+  });
+});
+
+/* ====================== LOADER ====================== */
+function startLoader(hint) {
+  document.getElementById('loader').classList.remove('hidden');
+  document.getElementById('loaderHint').textContent = hint;
+  document.getElementById('loaderWarning').classList.add('hidden');
+  document.getElementById('resultsWrap').classList.add('hidden');
+  document.getElementById('statsBar').classList.add('hidden');
+  document.getElementById('fileHint').classList.add('hidden');
+
+  // Start timer
+  loaderStartTime = Date.now();
+  document.getElementById('loaderTimer').textContent = '⏱ 0s';
+  if (loaderInterval) clearInterval(loaderInterval);
+  loaderInterval = setInterval(() => {
+    const sec = Math.floor((Date.now() - loaderStartTime) / 1000);
+    document.getElementById('loaderTimer').textContent = `⏱ ${sec}s`;
+    if (sec >= 90) {
+      document.getElementById('loaderWarning').classList.remove('hidden');
+    }
+  }, 1000);
+}
+
+function stopLoader() {
+  document.getElementById('loader').classList.add('hidden');
+  if (loaderInterval) {
+    clearInterval(loaderInterval);
+    loaderInterval = null;
+  }
+}
+
+/* ====================== TOAST ====================== */
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `fixed bottom-6 right-6 max-w-xs glass border rounded-xl px-5 py-3 text-sm font-medium shadow-2xl toast-slide z-50 ${
+    type === 'error' ? 'border-red-500/50 text-red-300' :
+    type === 'info'  ? 'border-sky-500/50 text-sky-300' :
+    type === 'warn'  ? 'border-amber-500/50 text-amber-300' :
+                       'border-emerald-500/50 text-emerald-300'
+  }`;
+  el.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 4500);
+}
+
+/* ====================== HELPERS ====================== */
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function shortUrl(u) {
+  try { return u.replace(/^https?:\/\//, '').slice(0, 40); } catch(e) { return u; }
+}
+
+/* ====================== RENDER STATS ====================== */
+function renderStats(data) {
+  const total   = data.length;
+  const emails  = data.filter(r => r['Official Email ID'] && r['Official Email ID'] !== 'N/A').length;
+  const phones  = data.filter(r => r['Phone Number'] && r['Phone Number'] !== 'N/A').length;
+  const sites   = data.filter(r => r['Website'] && r['Website'] !== 'N/A').length;
+
+  // Using inline styles — reliable across Tailwind CDN
+  const stats = [
+    { label: 'Total Leads', value: total, color: '#a5b4fc' },
+    { label: 'Emails Found', value: emails, color: '#6ee7b7' },
+    { label: 'Phones Found', value: phones, color: '#7dd3fc' },
+    { label: 'Websites', value: sites, color: '#c4b5fd' },
+  ];
+
+  document.getElementById('statsBar').innerHTML = stats.map(s => `
+    <div class="glass border border-slate-800 rounded-xl p-4">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">${s.label}</p>
+      <p class="text-2xl font-bold mt-1" style="color:${s.color}">${s.value}</p>
+    </div>
+  `).join('');
+  document.getElementById('statsBar').classList.remove('hidden');
+}
+
+/* ====================== RENDER TABLE ====================== */
+function renderTable(data) {
+  currentFiltered = data;
+  const tbody = document.getElementById('tableBody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-500">No results found</td></tr>`;
+  } else {
+    tbody.innerHTML = data.map((r, i) => `
+      <tr class="hover:bg-slate-800/50 transition">
+        <td class="px-4 py-2.5 text-slate-500 text-xs">${i + 1}</td>
+        <td class="px-4 py-2.5 font-semibold">${escapeHtml(r['Business Name'])}</td>
+        <td class="px-4 py-2.5 text-sky-300 font-mono text-xs">${escapeHtml(r['Phone Number'])}</td>
+        <td class="px-4 py-2.5 text-emerald-300 font-mono text-xs">${escapeHtml(r['Official Email ID'])}</td>
+        <td class="px-4 py-2.5 text-xs">
+          ${r['Website'] && r['Website'] !== 'N/A'
+            ? `<a href="${escapeHtml(r['Website'])}" target="_blank" class="text-indigo-400 hover:underline" title="${escapeHtml(r['Website'])}">${escapeHtml(shortUrl(r['Website']))}</a>`
+            : '<span class="text-slate-500">N/A</span>'}
+        </td>
+        <td class="px-4 py-2.5 text-xs text-slate-400 max-w-xs">${escapeHtml(r['Address'])}</td>
+        <td class="px-4 py-2.5 text-amber-300 text-xs">${escapeHtml(r['Rating'])}</td>
+        <td class="px-4 py-2.5 text-xs text-slate-400">${escapeHtml(r['Source'])}</td>
+      </tr>
+    `).join('');
+  }
+  document.getElementById('showingCount').textContent = `Showing ${data.length} of ${currentData.length}`;
+  document.getElementById('resultsWrap').classList.remove('hidden');
+  document.getElementById('downloadBtn').classList.remove('hidden');
+  document.getElementById('fileHint').classList.remove('hidden');
+}
+
+/* ====================== SHOW RESULTS ====================== */
+function showResults(data, isError = false) {
+  currentData = data;
+  renderStats(data);
+  renderTable(data);
+  document.getElementById('searchBox').value = '';
+  document.getElementById('lastScrapedAt').textContent = 'Last scraped: ' + new Date().toLocaleTimeString();
+
+  // Save to localStorage
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      data, ts: Date.now()
+    }));
+  } catch(e) { /* quota exceeded - ignore */ }
+
+  if (isError) {
+    toast(`⚠️ ${data.length} row(s) — check Address column for details`, 'warn');
+  }
+}
+
+/* ====================== FILTER ====================== */
+document.getElementById('searchBox').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  const filtered = currentData.filter(r =>
+    Object.values(r).some(v => String(v).toLowerCase().includes(q))
+  );
+  renderTable(filtered);
+});
+
+/* ====================== COPY TSV ====================== */
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const data = currentFiltered.length ? currentFiltered : currentData;
+  if (!data.length) return toast('No data to copy', 'error');
+  const headers = ['Business Name', 'Phone Number', 'Website', 'Official Email ID', 'Address', 'Rating', 'Source'];
+  const tsv = [
+    headers.join('\t'),
+    ...data.map(r => headers.map(h => r[h] ?? '').join('\t'))
+  ].join('\n');
+  navigator.clipboard.writeText(tsv)
+    .then(() => toast(`✅ Copied ${data.length} rows to clipboard!`))
+    .catch(() => toast('Copy failed', 'error'));
+});
+
+/* ====================== CSV DOWNLOAD ====================== */
+function csvEscape(v) {
+  const s = String(v ?? '');
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+document.getElementById('csvBtn').addEventListener('click', () => {
+  const data = currentFiltered.length ? currentFiltered : currentData;
+  if (!data.length) return toast('No data to export', 'error');
+  const headers = ['Business Name', 'Phone Number', 'Website', 'Official Email ID', 'Address', 'Rating', 'Source'];
+  const csv = [
+    headers.join(','),
+    ...data.map(r => headers.map(h => csvEscape(r[h])).join(','))
+  ].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `leads_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 CSV downloaded (${data.length} rows)`);
+});
+
+/* ====================== JSON COPY ====================== */
+document.getElementById('jsonBtn').addEventListener('click', () => {
+  const data = currentFiltered.length ? currentFiltered : currentData;
+  if (!data.length) return toast('No data', 'error');
+  navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+    .then(() => toast('✅ JSON copied to clipboard'))
+    .catch(() => toast('Copy failed', 'error'));
+});
+
+/* ====================== API CALL ====================== */
+async function postForm(url, formData, hint, onSuccess) {
+  startLoader(hint);
+  currentAbortController = new AbortController();
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData,
+      signal: currentAbortController.signal
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status}${text ? ' — ' + text.slice(0, 100) : ''}`);
+    }
+
+    const json = await res.json();
+    stopLoader();
+
+    if (json.status === 'success' && json.data) {
+      const hasError = json.data.length === 1 &&
+        (json.data[0]['Address']?.includes('⚠') ||
+         json.data[0]['Address']?.includes('fail') ||
+         json.data[0]['Address']?.includes('Error') ||
+         json.data[0]['Source']?.includes('error'));
+      showResults(json.data, hasError);
+      if (!hasError) toast(`✅ ${json.total} leads extracted!`);
+      if (onSuccess) onSuccess();
+    } else if (json.status === 'error') {
+      showResults(json.data || [], true);
+      toast('⚠️ Scraper returned an error — see results', 'warn');
+    } else {
+      toast('No results returned', 'info');
+    }
+  } catch (err) {
+    stopLoader();
+    if (err.name === 'AbortError') {
+      toast('🛑 Cancelled by user', 'warn');
+    } else {
+      toast('❌ Error: ' + err.message, 'error');
+    }
+  } finally {
+    currentAbortController = null;
+  }
+}
+
+/* ====================== CANCEL ====================== */
+document.getElementById('cancelBtn').addEventListener('click', () => {
+  if (currentAbortController) {
+    currentAbortController.abort();
+  }
+});
+
+/* ====================== FORMS ====================== */
+document.getElementById('gmapsForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const query = fd.get('gmaps_query') || '';
+  lastGmapsQuery = query;
+  try { localStorage.setItem(QUERY_KEY, query); } catch(e){}
+  document.getElementById('rerunGmaps').classList.remove('hidden');
+  postForm('/api/gmaps-scrape', fd, 'Selenium + Deep scan running… please wait');
+});
+
+document.getElementById('bulkForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.set('crawl_contact', e.target.crawl_contact.checked ? 'true' : 'false');
+  postForm('/api/bulk-scrape', fd, 'Scanning all URLs in parallel…');
+});
+
+document.getElementById('singleForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.set('use_selenium', e.target.use_selenium.checked ? 'true' : 'false');
+  postForm('/api/web-scrape', fd, 'Trying fast scrape → auto fallback if needed');
+});
+
+/* ====================== RERUN ====================== */
+document.getElementById('rerunGmaps').addEventListener('click', () => {
+  if (!lastGmapsQuery) return;
+  document.querySelector('input[name="gmaps_query"]').value = lastGmapsQuery;
+  document.getElementById('gmapsForm').dispatchEvent(new Event('submit'));
+});
+
+/* ====================== HEALTH CHECK ====================== */
+fetch('/api/health').then(r => r.json())
+  .then(() => {
+    const pill = document.getElementById('statusPill');
+    pill.textContent = '● Online';
+    pill.className = 'text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+  })
+  .catch(() => {
+    const pill = document.getElementById('statusPill');
+    pill.textContent = '● Offline';
+    pill.className = 'text-xs px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30';
+    toast('⚠️ Server not running. Start: python app.py', 'error');
+  });
+
+/* ====================== RESTORE LAST RESULTS ====================== */
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.data && parsed.data.length) {
+        showResults(parsed.data);
+        toast('💾 Restored last results from browser', 'info');
+      }
+    }
+    const lastQ = localStorage.getItem(QUERY_KEY);
+    if (lastQ) {
+      lastGmapsQuery = lastQ;
+      document.getElementById('rerunGmaps').classList.remove('hidden');
+      document.querySelector('input[name="gmaps_query"]').value = lastQ;
+    }
+  } catch(e) { /* ignore */ }
+});
+
+console.log('✅ Lead Engine UI loaded — v2');
+</script>
+
+</body>
+</html>
